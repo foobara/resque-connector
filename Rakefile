@@ -8,3 +8,7 @@ require "rubocop/rake_task"
 RuboCop::RakeTask.new
 
 task default: %i[spec rubocop]
+
+require_relative "local_playground"
+
+require "resque/tasks"
