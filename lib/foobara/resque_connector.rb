@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require_relative "resque_connector/version"
 
 module Foobara

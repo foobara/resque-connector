@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "foobara/resque_connector"
 
 RSpec.configure do |config|
