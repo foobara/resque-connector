@@ -1,8 +1,1 @@
-require_relative "resque_connector/version"
-
-module Foobara
-  module ResqueConnector
-    class Error < StandardError; end
-    # Your code goes here...
-  end
-end
+Foobara::Util.require_directory "#{__dir__}/../../src"
