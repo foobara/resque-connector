@@ -23,6 +23,7 @@ jobs:
           - 6379:6379
     env:
       REDIS_URL: redis://localhost:6379
+      FORK_PER_JOB: false
     steps:
       - uses: actions/checkout@v3
       - name: setup ruby version and foobara branch and sha1
