@@ -3,9 +3,6 @@ require "bundler/setup"
 require "pry"
 require "pry-byebug"
 
-require "foobara/all"
-require "foobara/command_connectors"
-
 require "foobara/load_dotenv"
 
 # TODO: setup boot pattern here

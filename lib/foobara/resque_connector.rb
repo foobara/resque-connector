@@ -1,6 +1,7 @@
 require "resque"
 
 require "foobara/all"
+require "foobara/command_connectors"
 
 module Foobara
   module ResqueConnector
