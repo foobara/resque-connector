@@ -73,12 +73,13 @@ module Foobara
         command_name_to_queue[transformed_command_class.full_command_name] = queue
 
         if command_class.is_a?(Class) && command_class < Command
-          klass = Util.make_class("#{command_class.name}::Async", RunCommandAsync)
+          klass = Util.make_class("#{command_class.name}::Async", RunCommandAsync) do
+          end
 
           klass.inputs transformed_command_class.inputs_type.declaration_data
 
-          klass.resque_connector = self
-          klass.target_command_class = transformed_command_class
+          klass.default_resque_connector = self
+          klass.default_command_class = transformed_command_class
         end
 
         transformed_command_class
