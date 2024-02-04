@@ -7,6 +7,10 @@ module Foobara
   module ResqueConnector
     class << self
       def reset_all
+        if CommandConnectors::ResqueConnector.instance_variable_defined?(:@all)
+          CommandConnectors::ResqueConnector.all.clear
+        end
+
         # TODO: protect against this in production
         Resque.redis.flushdb
       end
