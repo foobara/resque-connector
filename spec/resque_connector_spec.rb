@@ -12,7 +12,7 @@ RSpec.describe Foobara::CommandConnectors::ResqueConnector do
     stub_module "SomeOrg::SomeDomain" do
       foobara_domain!
     end
-    stub_class "SomeOrg::SomeDomain::SomeCommand", Foobara::Command do
+    stub_class "SomeOrg::SomeDomain::DoSomething", Foobara::Command do
       inputs do
         foo :integer
         bar :string
@@ -33,8 +33,8 @@ RSpec.describe Foobara::CommandConnectors::ResqueConnector do
       command_connector.connect(command_class)
     end
 
-    it "gives a working ::Async method" do
-      command = command_class::Async.new(foo: 1, bar: "bar")
+    it "gives a working Enqueue*Command RunCommandAsync subclass" do
+      command = SomeOrg::SomeDomain::DoSomethingAsync.new(foo: 1, bar: "bar")
 
       expect {
         command.run!
@@ -48,7 +48,7 @@ RSpec.describe Foobara::CommandConnectors::ResqueConnector do
       command_name = args["command_name"]
       inputs = args["inputs"]
 
-      expect(command_name).to eq("SomeOrg::SomeDomain::SomeCommand")
+      expect(command_name).to eq("SomeOrg::SomeDomain::DoSomething")
       expect(inputs).to eq("foo" => 1, "bar" => "bar")
 
       worker = Resque::Worker.new(:general)
