@@ -66,22 +66,27 @@ module Foobara
       # to express that. A way could be found, though. So probably creating a command class is better.
       # And in this context maybe that should be the transformed command?
       # So TransformedCommand is connector specific? And some connectors might have no TransformedCommand?
-      def connect(command_class, *, queue: nil, **, &)
-        transformed_command_class = super(command_class, *, **, &)
+      def connect(connectable, *, queue: nil, **, &)
+        transformed_command_classes = super(connectable, *, **, &)
 
-        queue ||= Resque.queue_from_class(transformed_command_class) || :general
-        command_name_to_queue[transformed_command_class.full_command_name] = queue
+        Util.array(transformed_command_classes).each do |transformed_command_class|
+          command_class = transformed_command_class.command_class
+          queue ||= Resque.queue_from_class(transformed_command_class) || :general
+          command_name_to_queue[transformed_command_class.full_command_name] = queue
 
-        if command_class.is_a?(Class) && command_class < Command
-          klass = Util.make_class("#{command_class.name}Async", RunCommandAsync)
+          if command_class.is_a?(Class) && command_class < Command
+            klass = Util.make_class("#{command_class.name}Async", RunCommandAsync)
 
-          klass.inputs transformed_command_class.inputs_type.declaration_data
+            inputs_type = transformed_command_class.inputs_type
 
-          klass.resque_connector = self
-          klass.target_command_class = transformed_command_class
+            if inputs_type
+              klass.inputs transformed_command_class.inputs_type.declaration_data
+            end
+
+            klass.resque_connector = self
+            klass.target_command_class = transformed_command_class
+          end
         end
-
-        transformed_command_class
       end
 
       def enqueue(command_name, inputs = nil)

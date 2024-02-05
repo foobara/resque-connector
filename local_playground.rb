@@ -6,6 +6,7 @@ require "pry-byebug"
 require "foobara/load_dotenv"
 
 # TODO: setup boot pattern here
+# TODO: this is wrong, change to not pass in anything and set the environment elsewhere
 Foobara::LoadDotenv.run!(env: "development")
 
 require "foobara/resque_connector"
