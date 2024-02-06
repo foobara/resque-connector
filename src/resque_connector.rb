@@ -87,6 +87,8 @@ module Foobara
             klass.target_command_class = transformed_command_class
           end
         end
+
+        transformed_command_classes
       end
 
       def enqueue(command_name, inputs = nil)
