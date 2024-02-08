@@ -12,7 +12,7 @@ module Foobara
         end
 
         # TODO: protect against this in production
-        Resque.redis.flushdb
+        Resque.redis.redis.flushdb
       end
     end
   end
