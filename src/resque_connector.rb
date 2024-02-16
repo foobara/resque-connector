@@ -67,28 +67,29 @@ module Foobara
       # And in this context maybe that should be the transformed command?
       # So TransformedCommand is connector specific? And some connectors might have no TransformedCommand?
       def connect(connectable, *, queue: nil, **, &)
-        transformed_command_classes = super(connectable, *, **, &)
+        exposed_commands = super(connectable, *, **, &)
+        exposed_commands = Util.array(exposed_commands)
 
-        Util.array(transformed_command_classes).each do |transformed_command_class|
-          command_class = transformed_command_class.command_class
-          queue ||= Resque.queue_from_class(transformed_command_class) || :general
-          command_name_to_queue[transformed_command_class.full_command_name] = queue
+        exposed_commands.each do |exposed_command|
+          command_class = exposed_command.command_class
+          transformed_command_class = exposed_command.transformed_command_class
 
-          if command_class.is_a?(Class) && command_class < Command
-            klass = Util.make_class("#{command_class.name}Async", RunCommandAsync)
+          queue ||= Resque.queue_from_class(exposed_command) || :general
+          command_name_to_queue[exposed_command.full_command_name] = queue
 
-            inputs_type = transformed_command_class.inputs_type
+          klass = Util.make_class("#{command_class.name}Async", RunCommandAsync)
 
-            if inputs_type
-              klass.inputs transformed_command_class.inputs_type.declaration_data
-            end
+          inputs_type = transformed_command_class.inputs_type
 
-            klass.resque_connector = self
-            klass.target_command_class = transformed_command_class
+          if inputs_type
+            klass.inputs transformed_command_class.inputs_type
           end
+
+          klass.resque_connector = self
+          klass.target_command_class = exposed_command
         end
 
-        transformed_command_classes
+        exposed_commands
       end
 
       def enqueue(command_name, inputs = nil)
