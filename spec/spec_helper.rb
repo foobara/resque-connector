@@ -3,7 +3,6 @@ require "bundler/setup"
 require "pry"
 require "pry-byebug"
 require "rspec/its"
-require "rack/test"
 require "simplecov"
 
 SimpleCov.start do
