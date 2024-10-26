@@ -1,3 +1,5 @@
+ENV["FOOBARA_ENV"] = "test"
+
 require "bundler/setup"
 
 require "pry"
@@ -30,9 +32,6 @@ RSpec.configure do |config|
   # config.raise_errors_for_deprecations!
 end
 
-require "foobara/load_dotenv"
-
-Foobara::LoadDotenv.run!(env: "test")
-
-require "foobara/resque_connector"
 require "foobara/spec_helpers/all"
+
+require_relative "../local_playground"
