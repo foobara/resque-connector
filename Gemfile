@@ -1,10 +1,10 @@
+require_relative "version"
+
 source "https://rubygems.org"
-ruby File.read("#{__dir__}/.ruby-version")
+ruby Foobara::ResqueConnector::MINIMUM_RUBY_VERSION
 
 gemspec
 
-# Development dependencies go here
-# TODO: move this to .gemspec
 gem "foobara-dotenv-loader"
 gem "foobara-rubocop-rules"
 gem "foobara-spec-helpers"
