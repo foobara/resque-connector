@@ -6,7 +6,7 @@ module Foobara
           def perform(job_data)
             job_data = job_data.transform_keys(&:to_sym)
 
-            allowed_keys = %i[command_name inputs connector_name]
+            allowed_keys = [:command_name, :inputs, :connector_name]
 
             invalid_keys = job_data.keys - allowed_keys
 
