@@ -45,27 +45,6 @@ module Foobara
         end
       end
 
-      attr_accessor :name
-
-      def initialize(*, name: nil, **, &)
-        self.name = name.to_sym if name
-
-        super(*, **, &)
-      end
-
-      # NOTE: inputs transformer in this context is not clear. Is it how we transform for writing the job to redis?
-      # Or are we transforming what comes out of redis?  It seems like redis serialize/redis deserialize would make
-      # more sense here. It feels like these types of inputs_transformer helpers from connectors like http are not
-      # universally meaningful.
-      # It also feels like CommandClass.run_async would be a more intuitive interface.
-      # This makes run_async feel like an "action" like "run" and "help". So maybe "actions" should be viewed
-      # as methods on Org/Domain/Commands/Connector.
-      # However, if it made a class, like SomeCommandAsync, then it could be exposed through other connectors
-      # and be declared in depends_on calls and have proper possible errors for that operation.
-      # But on the downside, it would appear in the domain's list of commands unless coming up with a clear way
-      # to express that. A way could be found, though. So probably creating a command class is better.
-      # And in this context maybe that should be the transformed command?
-      # So TransformedCommand is connector specific? And some connectors might have no TransformedCommand?
       def connect(connectable, *, queue: nil, **, &)
         exposed_commands = super(connectable, *, **, &)
         exposed_commands = Util.array(exposed_commands)
@@ -106,7 +85,6 @@ module Foobara
         job[:connector_name] = name unless name.nil?
 
         queue = command_name_to_queue[command_name]
-
         Resque.enqueue_to(queue, CommandJob, job)
       end
 
