@@ -2,6 +2,13 @@ RSpec.describe Foobara::CommandConnectors::ResqueConnector do
   after do
     Foobara.reset_alls
   end
+
+  let(:command) { SomeOrg::SomeDomain::DoSomethingAsync.new(inputs) }
+  let(:outcome) { command.run }
+  let(:result) { outcome.result }
+  let(:errors_hash) { outcome.errors_hash }
+  let(:inputs) do
+    { foo: 1, bar: "bar" }
   end
 
   let(:command_connector) { described_class.new }
@@ -25,20 +32,14 @@ RSpec.describe Foobara::CommandConnectors::ResqueConnector do
     end
   end
 
-  it "has a version number" do
-    expect(Foobara::ResqueConnector::VERSION).to_not be_nil
-  end
-
   describe ".connect" do
     before do
       command_connector.connect(command_class)
     end
 
     it "gives a working Enqueue*Command RunCommandAsync subclass" do
-      command = SomeOrg::SomeDomain::DoSomethingAsync.new(foo: 1, bar: "bar")
-
       expect {
-        command.run!
+        expect(outcome).to be_success
       }.to change { Resque.size(:general) }.from(0).to(1)
 
       job = Resque.peek(:general, 0, 1)
@@ -57,6 +58,18 @@ RSpec.describe Foobara::CommandConnectors::ResqueConnector do
       expect(worker.work_one_job).to be(true)
       expect(Resque::Failure.count).to be(0)
       expect(Resque.size(:general)).to be(0)
+    end
+
+    context "when passing a bad input" do
+      let(:inputs) do
+        { baz: "100" }
+      end
+
+      it "gives an expected validation error" do
+        expect(outcome).to_not be_success
+        expect(errors_hash.size).to be 1
+        expect(errors_hash["data.unexpected_attributes"][:context][:unexpected_attributes]).to eq([:baz])
+      end
     end
   end
 end
