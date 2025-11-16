@@ -1,6 +1,7 @@
 RSpec.describe Foobara::CommandConnectors::ResqueConnector do
   after do
-    Foobara::ResqueConnector.reset_all
+    Foobara.reset_alls
+  end
   end
 
   let(:command_connector) { described_class.new }

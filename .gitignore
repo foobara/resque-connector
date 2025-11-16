@@ -7,10 +7,10 @@
 /spec/reports/
 /tmp/
 
-# rspec failure tracking
 .rspec_status
+.byebug_history
 
 /.idea/
 
-/.env.local
-/.env.*.local
+.env.local
+.env.*.local

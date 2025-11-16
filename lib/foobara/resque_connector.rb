@@ -7,6 +7,8 @@ module Foobara
   module ResqueConnector
     class << self
       def reset_all
+        Foobara.raise_if_production!("reset_all")
+
         if CommandConnectors::ResqueConnector.instance_variable_defined?(:@all)
           CommandConnectors::ResqueConnector.all.clear
         end
@@ -19,3 +21,4 @@ module Foobara
 end
 
 Foobara::Util.require_directory("#{__dir__}/../../src")
+Foobara.project "resque_connector", project_path: "#{__dir__}/../../"
