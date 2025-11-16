@@ -32,16 +32,31 @@ module Foobara
           all[name] = instance
         end
 
+        # TODO: this should explode if passed nil. Use .default_connector instead.
         def [](name)
           name = name.to_sym if name
 
           unless all.key?(name)
             # :nocov:
-            raise "#{name} not registered"
+            raise "Resque connector with name of #{name.inspect} is not registered"
             # :nocov:
           end
 
           all[name]
+        end
+
+        def default_connector
+          self[nil] || new
+        end
+
+        def default_connector_registered?
+          all.key?(nil)
+        end
+
+        def connector_registered?(name)
+          raise ArgumentError, "must provide a name" unless name
+
+          all.key?(name)
         end
       end
 
