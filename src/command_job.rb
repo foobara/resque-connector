@@ -11,9 +11,9 @@ module Foobara
             invalid_keys = job_data.keys - allowed_keys
 
             if invalid_keys.any?
-              # :nocov:
+              # simplecov:disable
               raise ArgumentError, "Invalid keys: #{invalid_keys.join(", ")}"
-              # :nocov:
+              # simplecov:enable
             end
 
             command_name = job_data[:command_name]
