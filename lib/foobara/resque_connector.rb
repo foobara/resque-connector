@@ -7,7 +7,7 @@ module Foobara
   module ResqueConnector
     class << self
       def reset_all
-        Foobara.raise_if_production!("reset_all")
+        Foobara.raise_if_production!
 
         if CommandConnectors::ResqueConnector.instance_variable_defined?(:@all)
           CommandConnectors::ResqueConnector.all.clear

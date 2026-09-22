@@ -12,7 +12,7 @@ require "foobara/resque_connector"
 if ENV["REDIS_URL"]
   Resque.redis = Redis.new(url: ENV["REDIS_URL"])
 else
-  # :nocov:
+  # simplecov:disable
   raise 'Must set ENV["REDIS_URL"] if trying to initialize RedisCrudDriver with no arguments'
-  # :nocov:
+  # simplecov:enable
 end

@@ -5,11 +5,11 @@ module Foobara
         attr_accessor :command_class
 
         def initialize(command_class)
-          # :nocov:
+          # simplecov:disable
           self.command_class = command_class
 
           super("No command found for #{command_class}")
-          # :nocov:
+          # simplecov:enable
         end
       end
 
@@ -24,9 +24,9 @@ module Foobara
           name = instance.name
 
           if all.key?(name)
-            # :nocov:
+            # simplecov:disable
             raise "#{name} already registered"
-            # :nocov:
+            # simplecov:enable
           end
 
           all[name] = instance
@@ -36,9 +36,9 @@ module Foobara
           name = name.to_sym if name
 
           unless all.key?(name)
-            # :nocov:
+            # simplecov:disable
             raise "#{name} not registered"
-            # :nocov:
+            # simplecov:enable
           end
 
           all[name]
@@ -75,9 +75,9 @@ module Foobara
         transformed_command_class = transformed_command_from_name(command_name)
 
         unless transformed_command_class
-          # :nocov:
+          # simplecov:disable
           raise NoCommandFoundError, command_name
-          # :nocov:
+          # simplecov:enable
         end
 
         job = { command_name: }
