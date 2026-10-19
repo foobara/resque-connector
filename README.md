@@ -1,49 +1,62 @@
 # Foobara::ResqueConnector
 
-TODO: Delete this and the text below, and describe your gem
-
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library
-into a gem. Put your Ruby code in the file `lib/foobara/resque_connector`. To experiment with that code,
-run `bin/console` for an interactive prompt.
+`foobara-resque-connector` connects Foobara commands to Resque for asynchronous use.
 
 ## Installation
 
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it
-to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with
-instructions to install your gem from git if you don't plan to release to RubyGems.org.
+Add `foobara-resque-connector` to your Gemfile or .gemspec file and `bundle install`.
 
-Install the gem and add to the application's Gemfile by executing:
-
-    $ bundle add UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG
-
-If bundler is not being used to manage dependencies, install the gem by executing:
-
-    $ gem install UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG
+Or even just `gem install foobara-resque-connector` if playing with it directly.
 
 ## Usage
 
-TODO: Write usage instructions here
+To set this up automatically in an existing Foobara project, run `foob g resque-connector`.
 
-## Development
+Otherwise, for the manual setup, require the library and connect the Foobara command you want to run asynchronously.
 
-To install foobara for now to run tests, you must run the following:
+```ruby
+require "foobara/resque_connector"
 
- ```
-bundle config set local.foobara ../foobara
-bundle config set disable_local_branch_check true
+Resque.redis = Redis.new(url: ENV.fetch("REDIS_URL"))
+
+class DoSomething < Foobara::Command
+  inputs do 
+    foo :integer
+    bar :string
+  end
+
+  def execute
+    success_message
+  end
+
+  def success_message
+    "success! #{foo} #{bar}"
+  end
+end
+
+connector = Foobara::CommandConnectors::ResqueConnector.new
+connector.connect(DoSomething, queue: :general)
 ```
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can
-also run `bin/console` for an interactive prompt that will allow you to experiment.
+You can then queue the Resque job by running a command with the `Async` suffix:
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the
-version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version,
-push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+```ruby
+DoSomethingAsync.run!(foo: 1, bar: "bar")
+```
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/foobara-resque_connector.
+Contributions are welcome on Github at [foobara/resque-connector](https://github.com/foobara/resque-connector/)
 
-## Licensing
+To work on an existing issue or submit a Pull Request:
 
-This project is licensed under the Mozilla Public License Version 2.0. Please see LICENSE.txt for more info.
+1. Fork the repository and clone it onto your local machine
+2. Run `bundle install` to install dependencies
+3. Run `rake` to ensure that everything works as expected before making any changes
+4. Implement your changes
+5. Re-run `rake` to make sure that all tests and Rubocop pass
+6. Commit your changes, push to Github and open a pull request for review
+
+## License
+
+This project is licensed under the MPL-2.0 license. Please see [LICENSE.txt](LICENSE.txt) for more information.
