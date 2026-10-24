@@ -1,3 +1,7 @@
+## [0.1.1] - 2026-10-24
+
+- Fix some annoying deprecation warnings and require a newer foobara version
+
 ## [0.1.0] - 2025-08-22
 
 - Mark as compatible with Foobara 0.1.0
